@@ -29,7 +29,25 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let mut nums1: Vec<usize> = input
+        .lines()
+        .filter_map(|line| line.split_whitespace().nth(0))
+        .filter_map(|word| word.parse::<usize>().ok())
+        .collect();
+
+    let mut nums2: Vec<usize> = input
+        .lines()
+        .filter_map(|line| line.split_whitespace().nth(1))
+        .filter_map(|word| word.parse::<usize>().ok())
+        .collect();
+
+    let mut total: usize = 0;
+
+    for (i, num) in nums1.iter().enumerate() {
+        total += num * nums2.iter().filter(|x| num == *x).count();
+    }
+
+    Some(total as u32)
 }
 
 #[cfg(test)]
