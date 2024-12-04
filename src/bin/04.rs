@@ -1,5 +1,7 @@
 advent_of_code::solution!(4);
 
+const XMAS: [char; 4] = ['X', 'M', 'A', 'S'];
+
 // (x,y) is the location that needs to be checked in this call
 // (dx,dy) is the direction of word search
 pub fn search_for_word(
@@ -10,8 +12,6 @@ pub fn search_for_word(
     dx: i32,
     dy: i32,
 ) -> bool {
-    let word: Vec<char> = "XMAS".chars().collect();
-
     // If we found the end 'S' in the prev search iteration, matches will be 4 here.
     if letter_matches == 4 {
         return true;
@@ -22,7 +22,7 @@ pub fn search_for_word(
         }
 
         // Check if next char in search direction is next char in "XMAS"
-        if lines[y as usize][x as usize] != word[letter_matches] {
+        if lines[y as usize][x as usize] != XMAS[letter_matches] {
             return false;
         }
 
@@ -84,12 +84,11 @@ pub fn count_matches_from_loc(lines: &Vec<Vec<char>>, x: i32, y: i32) -> u32 {
 
 pub fn part_one(input: &str) -> Option<u32> {
     let lines: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
-    let mut x: i32 = 0;
     let mut y: i32 = 0;
     let mut total = 0;
 
     while y < lines.len() as i32 {
-        x = 0;
+        let mut x = 0;
         while x < lines[0].len() as i32 {
             total += count_matches_from_loc(&lines, x, y);
             x += 1;
