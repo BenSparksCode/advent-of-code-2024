@@ -1,8 +1,8 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 advent_of_code::solution!(5);
 
-pub fn structure_data(input: &str) -> (Vec<(i32, i32)>, Vec<Vec<i32>>, HashMap<i32, Vec<i32>>) {
+pub fn structure_data(input: &str) -> (HashSet<(i32, i32)>, Vec<Vec<i32>>, HashMap<i32, Vec<i32>>) {
     let divider_idx = 1176;
     let lines = input.lines().collect::<Vec<&str>>();
     let mut afters: HashMap<i32, Vec<i32>> = HashMap::new();
@@ -29,9 +29,12 @@ pub fn structure_data(input: &str) -> (Vec<(i32, i32)>, Vec<Vec<i32>>, HashMap<i
         })
         .collect();
 
+    let mut rules_set: HashSet<(i32, i32)> = HashSet::new();
+
     // Build HashMap of afters
     for r in &rules {
         afters.entry(r.0).or_default().push(r.1);
+        rules_set.insert(*r);
     }
 
     // Sort HashMap vector values
@@ -39,7 +42,7 @@ pub fn structure_data(input: &str) -> (Vec<(i32, i32)>, Vec<Vec<i32>>, HashMap<i
         v.sort();
     }
 
-    (rules, updates, afters)
+    (rules_set, updates, afters)
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
@@ -103,7 +106,7 @@ pub fn part_two(input: &str) -> Option<u32> {
             i += 1;
         }
 
-        // Add invalid update to bad_updates to be sorted below
+        // If update not valid, fix order and add middle num to sum
         if !valid {
             let mut x = 1;
             while x < update.len() {
