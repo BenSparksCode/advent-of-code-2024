@@ -2,7 +2,10 @@ use std::collections::{HashMap, HashSet};
 
 advent_of_code::solution!(5);
 
-pub fn structure_data(input: &str) -> (HashSet<(i32, i32)>, Vec<Vec<i32>>, HashMap<i32, Vec<i32>>) {
+pub fn structure_data(
+    input: &str,
+    need_rule_set: bool,
+) -> (HashSet<(i32, i32)>, Vec<Vec<i32>>, HashMap<i32, Vec<i32>>) {
     let divider_idx = 1176;
     let lines = input.lines().collect::<Vec<&str>>();
     let mut afters: HashMap<i32, Vec<i32>> = HashMap::new();
@@ -34,7 +37,9 @@ pub fn structure_data(input: &str) -> (HashSet<(i32, i32)>, Vec<Vec<i32>>, HashM
     // Build HashMap of afters
     for r in &rules {
         afters.entry(r.0).or_default().push(r.1);
-        rules_set.insert(*r);
+        if need_rule_set {
+            rules_set.insert(*r);
+        }
     }
 
     // Sort HashMap vector values
@@ -46,7 +51,7 @@ pub fn structure_data(input: &str) -> (HashSet<(i32, i32)>, Vec<Vec<i32>>, HashM
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let (_, updates, afters) = structure_data(input);
+    let (_, updates, afters) = structure_data(input, false);
     let mut sum_mids = 0;
 
     // Search for rule violations
@@ -81,7 +86,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let (rules, mut updates, afters) = structure_data(input);
+    let (rules, mut updates, afters) = structure_data(input, true);
     let mut sum_mids = 0;
 
     // Search for rule violations
