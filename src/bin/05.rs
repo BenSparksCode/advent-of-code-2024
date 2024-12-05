@@ -2,13 +2,10 @@ use std::collections::HashMap;
 
 advent_of_code::solution!(5);
 
-pub fn part_one(input: &str) -> Option<u32> {
+pub fn structure_data(input: &str) -> (Vec<(i32, i32)>, Vec<Vec<i32>>, HashMap<i32, Vec<i32>>) {
+    let divider_idx = 1176;
     let lines = input.lines().collect::<Vec<&str>>();
     let mut afters: HashMap<i32, Vec<i32>> = HashMap::new();
-    let mut sum_mids = 0;
-
-    // Splits rules and updates
-    let divider_idx = 1176;
 
     let rules: Vec<(i32, i32)> = lines[..divider_idx]
         .to_vec()
@@ -33,7 +30,7 @@ pub fn part_one(input: &str) -> Option<u32> {
         .collect();
 
     // Build HashMap of afters
-    for r in rules {
+    for r in &rules {
         afters.entry(r.0).or_default().push(r.1);
     }
 
@@ -41,6 +38,13 @@ pub fn part_one(input: &str) -> Option<u32> {
     for v in afters.values_mut() {
         v.sort();
     }
+
+    (rules, updates, afters)
+}
+
+pub fn part_one(input: &str) -> Option<u32> {
+    let (_, updates, afters) = structure_data(input);
+    let mut sum_mids = 0;
 
     // Search for rule violations
     for update in updates {
@@ -74,7 +78,50 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let (rules, mut updates, afters) = structure_data(input);
+    let mut sum_mids = 0;
+
+    // Search for rule violations
+    for update in updates.iter_mut() {
+        let mut valid = true;
+        let mut i: i32 = 1;
+        while i < update.len() as i32 {
+            let mut j: i32 = 0;
+            while j < i {
+                // Check if j is in i's afters = invalid
+                if let Some(after) = afters.get(&update[i as usize]) {
+                    if after.binary_search(&update[j as usize]).is_ok() {
+                        valid = false;
+                        break;
+                    }
+                }
+                j += 1;
+            }
+            if !valid {
+                break;
+            }
+            i += 1;
+        }
+
+        // Add invalid update to bad_updates to be sorted below
+        if !valid {
+            let mut x = 1;
+            while x < update.len() {
+                let mut j = 0;
+                while j < x {
+                    // If there is a rule that says (x|j), swap them
+                    if rules.contains(&(update[x], update[j])) {
+                        update.swap(j, x);
+                    }
+                    j += 1;
+                }
+                x += 1;
+            }
+            sum_mids += update[(update.len() - 1) / 2];
+        }
+    }
+
+    Some(sum_mids as u32)
 }
 
 #[cfg(test)]
