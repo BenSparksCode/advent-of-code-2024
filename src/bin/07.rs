@@ -38,9 +38,11 @@ pub fn search_combos(nums: &Vec<u64>, target: u64, result: u64, i: usize) -> boo
         return result == target;
     }
 
+    let next = nums[i];
+
     // True if target found in either of the X or + children
-    return search_combos(nums, target, result * nums[i], i + 1)
-        || search_combos(nums, target, result + nums[i], i + 1);
+    return search_combos(nums, target, result * next, i + 1)
+        || search_combos(nums, target, result + next, i + 1);
 }
 
 // Recursively search every combination of operators and nums. Incl. the || operator 😳
@@ -55,11 +57,16 @@ pub fn search_combos_3ops(nums: &Vec<u64>, target: u64, result: u64, i: usize) -
         return result == target;
     }
 
-    let next_len = digit_length(nums[i]);
+    let next = nums[i];
 
-    return search_combos_3ops(nums, target, result * nums[i], i + 1)
-        || search_combos_3ops(nums, target, result + nums[i], i + 1)
-        || search_combos_3ops(nums, target, result * 10u64.pow(next_len) + nums[i], i + 1);
+    return search_combos_3ops(nums, target, result * next, i + 1)
+        || search_combos_3ops(nums, target, result + next, i + 1)
+        || search_combos_3ops(
+            nums,
+            target,
+            result * 10u64.pow(digit_length(next)) + next,
+            i + 1,
+        );
 }
 
 pub fn part_one(input: &str) -> Option<u64> {
