@@ -44,7 +44,7 @@ pub fn search_combos(nums: &Vec<u64>, target: u64, result: u64, i: usize) -> boo
 }
 
 // Recursively search every combination of operators and nums. Incl. the || operator 😳
-pub fn search_combos_3ops(nums: &Vec<u64>, target: u128, result: u128, i: usize) -> bool {
+pub fn search_combos_3ops(nums: &Vec<u64>, target: u64, result: u64, i: usize) -> bool {
     // Return false early if result grew larger than target - cannot get smaller
     if result > target {
         return false;
@@ -57,14 +57,9 @@ pub fn search_combos_3ops(nums: &Vec<u64>, target: u128, result: u128, i: usize)
 
     let next_len = digit_length(nums[i]);
 
-    return search_combos_3ops(nums, target, result * nums[i] as u128, i + 1)
-        || search_combos_3ops(nums, target, result + nums[i] as u128, i + 1)
-        || search_combos_3ops(
-            nums,
-            target,
-            result * 10u128.pow(next_len) + nums[i] as u128,
-            i + 1,
-        );
+    return search_combos_3ops(nums, target, result * nums[i], i + 1)
+        || search_combos_3ops(nums, target, result + nums[i], i + 1)
+        || search_combos_3ops(nums, target, result * 10u64.pow(next_len) + nums[i], i + 1);
 }
 
 pub fn part_one(input: &str) -> Option<u64> {
@@ -109,7 +104,7 @@ pub fn part_two(input: &str) -> Option<u64> {
     let mut total = 0;
 
     for line in lines {
-        if search_combos_3ops(&line.1, line.0 as u128, line.1[0] as u128, 1) {
+        if search_combos_3ops(&line.1, line.0, line.1[0], 1) {
             total += line.0;
         }
     }
