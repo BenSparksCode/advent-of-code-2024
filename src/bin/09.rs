@@ -75,10 +75,11 @@ pub fn part_two(input: &str) -> Option<u64> {
     // Front and back sliding window pointers
     //          -->              <--
     // [.....(f0...f1)........(b0...b1)..]
-    let (mut b0, mut b1) = (last, last);
-    let (mut f0, mut f1) = (0, 0);
+    let (mut f0, mut f1);
+    let (mut b0, mut b1);
     let mut last_file_num = i32::MAX;
     let mut first_gap = 0;
+    b1 = last;
 
     loop {
         let mut file_too_big = false;
