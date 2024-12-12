@@ -50,6 +50,20 @@ pub fn part_one(input: &str) -> Option<u64> {
     Some(stones.len() as u64)
 }
 
+
 pub fn part_two(input: &str) -> Option<u32> {
+
+    // First, improve the splitting operation. Use lookup table for u64 probably.
+
+    // IDEA:
+    // Do DFS + memo
+    // Per stone, find the resulting set of stones after 5 blinks
+    // Per stone, memo the result vec after 5 blinks
+    // Recursively explore per stone -> 5 blinks -> vec -> per item -> 5 blinks -> etc
+    // Will need to go to recursive depth of 75 / 5 = 15
+    // Per depth, run 5 iterations to find result vec
+
+    // If memoed, return num of stones n will turn into after 5 blinks
+
     None
 }
