@@ -29,3 +29,6 @@ dhat-heap.json
 
 data/timings.json
 /data/examples
+
+# LEAVE ME ALONE!
+.DS_Store
