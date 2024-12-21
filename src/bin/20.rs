@@ -94,7 +94,7 @@ pub fn traverse(
 pub fn part_one(input: &str) -> Option<u32> {
     let (grid, _, end) = parse_input(input);
     let (path, dists) = traverse(&grid, end);
-    let min_skipped = 100; // Min picoseconds saved by shortcut
+    let min_saved = 100; // Min picoseconds saved by shortcut
     let mut num_cheats = 0;
 
     // Iterate through path from start to end, looking for shortcuts
@@ -108,7 +108,7 @@ pub fn part_one(input: &str) -> Option<u32> {
             // First check if gap=1 is valid shortcut
             let mut target = (t.0 + 2 * d.0, t.1 + 2 * d.1);
             if dists.contains_key(&target) {
-                if dists.get(&t).unwrap() - dists.get(&target).unwrap() >= min_skipped + 1 {
+                if dists.get(&t).unwrap() - dists.get(&target).unwrap() >= min_saved + 1 {
                     num_cheats += 1;
                     continue; // if gap=1 skip is valid, don't count gap=2 skip as well
                 }
@@ -117,7 +117,7 @@ pub fn part_one(input: &str) -> Option<u32> {
             // Else check if gap=2 is valid shortcut
             target = (t.0 + 3 * d.0, t.1 + 3 * d.1);
             if dists.contains_key(&target) {
-                if dists.get(&t).unwrap() - dists.get(&target).unwrap() >= min_skipped + 2 {
+                if dists.get(&t).unwrap() - dists.get(&target).unwrap() >= min_saved + 2 {
                     num_cheats += 1;
                 }
             }
@@ -127,6 +127,37 @@ pub fn part_one(input: &str) -> Option<u32> {
     Some(num_cheats)
 }
 
+// Part 2:
+// - Same as Part 1, except:
+// - When we iterate through the path tiles, find the Manhattan distance between tile t,
+// and all tiles ahead of it in the path.
+// - Then check that the Manhattan distance is <= cheat length, and the time saved is enough.
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let (grid, _, end) = parse_input(input);
+    let (path, dists) = traverse(&grid, end);
+    let min_saved = 100; // Min picoseconds saved by shortcut
+    let cheat_len = 20;
+    let mut num_cheats = 0;
+
+    // Iterate through path from start to end, looking for shortcuts
+    for (i, t) in path.iter().enumerate() {
+        for j in (i + min_saved)..path.len() {
+            let target = path[j];
+
+            // Manhattan distance between tile t and target tile
+            let man_dist = (t.0 - target.0).abs() + (t.1 - target.1).abs();
+            if man_dist > cheat_len {
+                continue;
+            }
+
+            let time_saved = dists.get(t).unwrap() - dists.get(&target).unwrap() - man_dist;
+            if time_saved < min_saved as i32 {
+                continue;
+            }
+
+            num_cheats += 1;
+        }
+    }
+
+    Some(num_cheats)
 }
